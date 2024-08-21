@@ -41,10 +41,6 @@
       <HintPath>C:\Program Files\Beehive Systems Ltd\WASP3D\Common\Shared Resources\Beesys.Wasp.KCHelper.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="BeeSys.Wasp.KernelController.IServices">
-      <HintPath>C:\Program Files\Beehive Systems Ltd\WASP3D\Common\Shared Resources\BeeSys.Wasp.KernelController.IServices.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Beesys.Wasp.Workflow.CommunicationHandler">
       <HintPath>C:\Program Files\Beehive Systems Ltd\WASP3D\Common\Shared Resources\Beesys.Wasp.Workflow.CommunicationHandler.dll</HintPath>
       <Private>False</Private>
@@ -97,8 +93,9 @@
     <Reference Include="System.Xml">
       <Private>False</Private>
     </Reference>
-    <Reference Include="WaspMosDataEntry">
-      <HintPath>C:\Program Files\Beehive Systems Ltd\WASP3D\DataBuzz\WaspMosDataEntry.dll</HintPath>
+    <Reference Include="WaspMosDataEntry, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dependencies\WaspMosDataEntry.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
