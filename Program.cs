@@ -18,7 +18,7 @@ namespace BeeSys.Wasp3d.Utilities
             CAssemblyResolver.AddDefaultPath();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmPlaylist());
+            Application.Run(new frmPlaylist()); 
         }
     }
 }

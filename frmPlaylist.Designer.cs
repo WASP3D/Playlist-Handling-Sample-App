@@ -181,7 +181,7 @@
         private System.Windows.Forms.TextBox txtGroup;
         private System.Windows.Forms.Button btnAddGroup;
         private System.Windows.Forms.TextBox txtBoxPlaylistslug;
-        private System.Windows.Forms.Button btnPlaylist;
+        private System.Windows.Forms.Button btnPlaylist; 
     }
 }
 
