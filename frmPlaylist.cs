@@ -36,7 +36,7 @@ namespace BeeSys.Wasp3d.Utilities
         private const string ID = "id";
         BindingList<PlaylistData> _lstInstances = null;
 
-        CMosDataEntry _dataEntryControl = null;
+        DataEntryControl _dataEntryControl = null;
         KCHelper kCHelper = null;
         string remoteurl = "";
         CProgramHelper _ProgramHelper;
@@ -566,7 +566,7 @@ namespace BeeSys.Wasp3d.Utilities
                 //Load template pool and Instance pool
                 if (_dataEntryControl == null)
                 {
-                    _dataEntryControl = new CMosDataEntry();
+                    _dataEntryControl = new DataEntryControl();
                     _dataEntryControl.InitialiseObject("", "", "");
                     _dataEntryControl.OnDataInstancePostUpdate += OnDataInstancePost;
                     _dataEntryControl.Dock = DockStyle.Fill;
