@@ -42,32 +42,18 @@ namespace BeeSys.Wasp3d.Utilities
         CProgramHelper _ProgramHelper;
         CPlaylistInstanceHelper _PlaylistHelper;
         private IMQReceiver _receiver = null;
-        private MessageReciever _objMessageReciever = null;
         private string _sKCMachineName = null;
 
         public frmPlaylist()
-        {
-            string multicaseIP = string.Empty;
-            string multicastPort = string.Empty;
-            int port = 0;
-            IPAddress iP;
+        {         
             InitializeComponent();
             //Read the KC url from app config
             if (ConfigurationManager.AppSettings["REMOTEMANAGERURL"] != null)
                 remoteurl = ConfigurationManager.AppSettings["REMOTEMANAGERURL"];
 
-            if (ConfigurationManager.AppSettings["MULTICASTADDRESS"] != null)
-                multicaseIP = ConfigurationManager.AppSettings["MULTICASTADDRESS"];
-
-            if (ConfigurationManager.AppSettings["MULTICASTPORT"] != null)
-                multicastPort = ConfigurationManager.AppSettings["MULTICASTPORT"];
-
             InitDataEntry();
             GetKcName(remoteurl);
-            IPAddress.TryParse(multicaseIP, out iP);
-            Int32.TryParse(multicastPort, out port);
-
-            InitKCEventChannelHandler(remoteurl, iP, port);
+            InitKCEventChannelHandler(remoteurl);
         }
 
 
@@ -118,7 +104,7 @@ namespace BeeSys.Wasp3d.Utilities
         /// <param name="kcurl"></param>
         /// <param name="multicastip"></param>
         /// <param name="multicastport"></param>
-        private void InitKCEventChannelHandler(string kcurl, IPAddress multicastip, int multicastport)
+        private void InitKCEventChannelHandler(string kcurl)
         {
             Tuple<string, string> eventchannelinfo = null;
             try
@@ -142,22 +128,13 @@ namespace BeeSys.Wasp3d.Utilities
                                     //Only configure raabitmq if rabbitmq config data found. otherwise configure msmq multicast
                                     if (!string.IsNullOrEmpty(eventchannelinfo.Item2))
                                         InitializeRabbitMQ(eventchannelinfo.Item2);
-                                    else
-                                        InitializeMulticast(multicastip, multicastport);
                                     break;
                                 }//end (rabbitmq)
                             default:
-                                {
-                                    InitializeMulticast(multicastip, multicastport);
                                     break;
-                                }//end (default)
                         }//end (switch(eventchannelinfo.Item1.ToLower()))
                     }//end (if (!string.IsNullOrEmpty(eventchannelinfo.Item1)))
-                    else
-                        InitializeMulticast(multicastip, multicastport);
                 }//end (if (eventchannelinfo != null))   
-                else
-                    InitializeMulticast(multicastip, multicastport);
             }//end (try)
             catch (Exception ex)
             {
@@ -167,42 +144,6 @@ namespace BeeSys.Wasp3d.Utilities
             {
                 eventchannelinfo = null;
             }//end (finally)
-        }
-
-        /// <summary>
-        /// Initialize MSMQ
-        /// </summary>
-        /// <param name="multicastip"></param>
-        /// <param name="multicastport"></param>
-        private void InitializeMulticast(IPAddress multicastip, int multicastport)
-        {
-
-
-            string queuename = null;
-            string queuelabelname = null;
-            try
-            {
-
-
-
-                //queuename = "waspUpdates." + _ModuleName.ToString();
-                queuename = "waspUpdates." + ModuleName;
-
-                //queuelabelname = "waspUpdates." + _ModuleName.ToString() + ".lbl";
-                queuelabelname = "waspUpdates." + ModuleName + ".lbl";
-                _objMessageReciever = new MessageReciever();
-                _objMessageReciever.Initalize(multicastip, multicastport, queuename, queuelabelname);
-                _objMessageReciever.OnMsgReceived += new MessageReciever.MessageReceiveEventHandler(m_objMessageReciever_OnMsgReceived);
-            }
-            catch (Exception ex)
-            {
-                WriteLog(ex);
-            }//end (catch)
-            finally
-            {
-                queuename = null;
-                queuelabelname = null;
-            }
         }
 
         /// <summary>
@@ -249,24 +190,7 @@ namespace BeeSys.Wasp3d.Utilities
                 return null;
             }//end (catch)
         }//end (GetKCConnectionInfo)
-
-        /// <summary>
-        /// Event handle to receive data from MSMQ
-        /// </summary>
-        /// <param name="sMessageBody"></param>
-        /// <param name="sMessageSubject"></param>
-        private void m_objMessageReciever_OnMsgReceived(string sMessageBody, string sMessageSubject)
-        {
-            try
-            {
-                UpdateMessageReceived(sMessageBody, sMessageSubject);
-            }
-            catch (Exception ex)
-            {
-
-                WriteLog(ex);
-            }
-        }
+      
         /// <summary>
         /// Event handle to receive data from RabbitMQ
         /// </summary>
@@ -973,22 +897,13 @@ namespace BeeSys.Wasp3d.Utilities
 
                 if (_receiver != null)
                 {
-                    _receiver.MessageReceived -= m_objMessageReciever_OnMsgReceived;
+                    _receiver.MessageReceived -= MQMessageReceived;
                     _receiver.Dispose();
                     _receiver = null;
                 }
-                if (_objMessageReciever != null)
-                {
-                    _objMessageReciever.OnMsgReceived -= MQMessageReceived;
-                    _objMessageReciever.ReleaseResource();
-                    _objMessageReciever = null;
-
-                }
-
             }
             catch (Exception ex)
             {
-
                 WriteLog(ex);
             }
         }
